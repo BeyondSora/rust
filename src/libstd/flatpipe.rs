@@ -791,7 +791,28 @@ mod test {
     type WriterChanFactory<F: Flattener<int>> =
         ~fn(TcpSocketBuf) -> FlatChan<int, F, WriterByteChan<TcpSocketBuf>>;
 
+    // XXX: Networking doesn't work in x86
+    #[cfg(target_arch = "x86_64")]
     fn test_some_tcp_stream<U: Unflattener<int>, F: Flattener<int>>(
+        reader_port: ReaderPortFactory<U>,
+        writer_chan: WriterChanFactory<F>,
+        port: uint) {
+        test_some_tcp_stream_for_real(reader_port,
+                                      writer_chan,
+                                      port);
+    }
+
+    #[cfg(target_arch = "x86")]
+    fn test_some_tcp_stream<U: Unflattener<int>, F: Flattener<int>>(
+        reader_port: ReaderPortFactory<U>,
+        writer_chan: WriterChanFactory<F>,
+        port: uint) {
+        test_some_tcp_stream_for_real(reader_port,
+                                      writer_chan,
+                                      port);
+    }
+
+    fn test_some_tcp_stream_for_real<U: Unflattener<int>, F: Flattener<int>>(
         reader_port: ReaderPortFactory<U>,
         writer_chan: WriterChanFactory<F>,
         port: uint) {
